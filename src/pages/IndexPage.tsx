@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router";
 import { Input, SelectPicker, IconButton, InputGroup } from "rsuite";
 import PlusIcon from "@rsuite/icons/Plus";
@@ -10,18 +10,10 @@ export type IReport = {
   title: string;
 };
 
-const sampleReports: IReport[] = [
-  { id: 1, title: "Monthly Sales Report" },
-  { id: 2, title: "Yearly Summary" },
-  { id: 3, title: "User Feedback Analysis" },
-  { id: 4, title: "Revenue Overview" },
-  { id: 5, title: "Something AP" },
-  { id: 6, title: "Purchase Overview 2025" },
-];
-
 const IndexPage = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
+  const [reports, setReports] = useState<IReport[]>([]);
 
   const sortOrder = searchParams.get("sort") ?? "asc";
   const searchQuery = searchParams.get("q") ?? "";
@@ -33,13 +25,20 @@ const IndexPage = () => {
     }
   };
 
+  useEffect(() => {
+    fetch(`${import.meta.env.VITE_API_URL}/reports`)
+      .then((res) => res.json())
+      .then((reports) => setReports(reports.data))
+      .catch(console.error);
+  }, []);
+
   const handleSearchChange = (value: string) => {
     searchParams.set("q", value);
     setSearchParams(searchParams);
   };
 
   const sortedFilteredReports = useMemo(() => {
-    let filteredReports = [...sampleReports];
+    let filteredReports = [...reports];
 
     if (searchQuery) {
       filteredReports = filteredReports.filter((r) =>
@@ -54,9 +53,7 @@ const IndexPage = () => {
     );
 
     return filteredReports;
-  }, [searchQuery, sortOrder]);
-
-  console.log('rerender')
+  }, [searchQuery, sortOrder, reports]);
 
   return (
     <div>
@@ -105,3 +102,4 @@ const IndexPage = () => {
 };
 
 export default IndexPage;
+
