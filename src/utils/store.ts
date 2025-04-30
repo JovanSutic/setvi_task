@@ -9,6 +9,7 @@ interface AppStore {
 
   setReports: (reports: IReport[]) => void;
   addReport: (report: IReportCreate) => void;
+  updateReport: (id: number, updatedReport: IReportCreate) => void;
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
   resetError: () => void;
@@ -32,6 +33,12 @@ export const useAppStore = create<AppStore>((set) => ({
           content: report.content,
         },
       ],
+    })),
+  updateReport: (id, updatedReport) =>
+    set((state) => ({
+      reports: state.reports.map((report) =>
+        report.id === id ? { ...report, ...updatedReport } : report
+      ),
     })),
   setLoading: (loading) => set({ loading }),
   setError: (error) => set({ error }),
