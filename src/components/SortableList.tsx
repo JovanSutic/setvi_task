@@ -18,7 +18,7 @@ import {
 } from "@dnd-kit/sortable";
 
 import SortableItem from "./SortableItem";
-import { IReport } from "../pages/IndexPage";
+import { IReport } from "../types/app.types";
 
 const SortableList = ({ reports }: { reports: IReport[] }) => {
   const [activeId, setActiveId] = useState<string>("");

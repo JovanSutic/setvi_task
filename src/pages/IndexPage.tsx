@@ -1,19 +1,26 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 import { useNavigate, useSearchParams } from "react-router";
-import { Input, SelectPicker, IconButton, InputGroup } from "rsuite";
+import {
+  Input,
+  SelectPicker,
+  IconButton,
+  InputGroup,
+  Loader,
+  Message,
+} from "rsuite";
 import PlusIcon from "@rsuite/icons/Plus";
 import SearchIcon from "@rsuite/icons/Search";
 import SortableList from "../components/SortableList";
+import axios from "axios";
+import { useAppStore } from "../utils/store";
 
-export type IReport = {
-  id: number;
-  title: string;
-};
+
 
 const IndexPage = () => {
   const navigate = useNavigate();
+  const { reports, loading, error, setReports, setLoading, setError } =
+    useAppStore();
   const [searchParams, setSearchParams] = useSearchParams();
-  const [reports, setReports] = useState<IReport[]>([]);
 
   const sortOrder = searchParams.get("sort") ?? "asc";
   const searchQuery = searchParams.get("q") ?? "";
@@ -24,13 +31,6 @@ const IndexPage = () => {
       setSearchParams(searchParams);
     }
   };
-
-  useEffect(() => {
-    fetch(`${import.meta.env.VITE_API_URL}/reports`)
-      .then((res) => res.json())
-      .then((reports) => setReports(reports.data))
-      .catch(console.error);
-  }, []);
 
   const handleSearchChange = (value: string) => {
     searchParams.set("q", value);
@@ -54,6 +54,29 @@ const IndexPage = () => {
 
     return filteredReports;
   }, [searchQuery, sortOrder, reports]);
+
+  useEffect(() => {
+    const fetchReports = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const res = await axios.get(`${import.meta.env.VITE_API_URL}/reports`);
+        setReports(res.data.data);
+      } catch (err: unknown) {
+        if (err instanceof Error) {
+          setError(err.message || "Failed to load reports.");
+        } else {
+          setError("An unknown error occurred.");
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (!reports.length) {
+      fetchReports();
+    }
+  }, [reports, setError, setLoading, setReports]);
 
   return (
     <div>
@@ -96,10 +119,11 @@ const IndexPage = () => {
         </div>
       </div>
 
-      <SortableList reports={sortedFilteredReports} />
+      {loading && <Loader center size="md" content="Loading reports..." />}
+      {error && <Message type="error" header={error} />}
+      {!loading && !error && <SortableList reports={sortedFilteredReports} />}
     </div>
   );
 };
 
 export default IndexPage;
-
