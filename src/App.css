@@ -55,6 +55,26 @@
   width: 300px;
 }
 
+.create-report-container {
+  max-width: 700px;
+  margin: auto;
+}
+
+.editor-input {
+  min-height: 150px;
+  padding: 8px;
+  outline: none;
+}
+
+.editor-placeholder {
+  color: #aaa;
+  padding: 8px;
+}
+
+.editor-paragraph {
+  margin: 0 0 10px;
+}
+
 @media (min-width: 768px) {
   .rs-col-spacing {
     margin-bottom: 12px;
