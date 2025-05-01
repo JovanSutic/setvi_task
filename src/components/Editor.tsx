@@ -47,7 +47,11 @@ export default function CustomEditor({
   };
 
   return (
-    <Editor value={value} onChange={handleChange}>
+    <Editor
+      value={value}
+      onChange={handleChange}
+      style={{ minHeight: "200px" }}
+    >
       <Toolbar>
         <BtnUndo />
         <BtnRedo />

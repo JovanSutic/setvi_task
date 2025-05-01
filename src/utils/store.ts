@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { IReport, IReportCreate } from "../types/app.types";
+import { sampleReports } from "../mocks/handlers";
 
 interface AppStore {
   reports: IReport[];
@@ -25,14 +26,23 @@ export const useAppStore = create<AppStore>((set) => ({
   setReports: (reports) => set({ reports }),
   addReport: (report: IReportCreate) =>
     set((state) => ({
-      reports: [
-        ...state.reports,
-        {
-          id: state.reports.length + 1,
-          title: report.title,
-          content: report.content,
-        },
-      ],
+      reports: state.reports.length
+        ? [
+            ...state.reports,
+            {
+              id: state.reports.length + 1,
+              title: report.title,
+              content: report.content,
+            },
+          ]
+        : [
+            ...sampleReports,
+            {
+              id: sampleReports.length + 1,
+              title: report.title,
+              content: report.content,
+            },
+          ],
     })),
   updateReport: (id, updatedReport) =>
     set((state) => ({

@@ -5,6 +5,7 @@ import type { FormInstance } from "rsuite";
 import { useNavigate } from "react-router-dom";
 import { useAppStore } from "../utils/store";
 import axios from "axios";
+import DraftModal from "../components/DraftModal";
 
 interface CreateReportForm {
   title: string;
@@ -49,6 +50,8 @@ export default function CreateReportPage() {
     setLoading,
     setError,
   } = useAppStore();
+
+  const [generateDraftModalOpen, setGenerateDraftModalOpen] = useState(false);
 
   const formRef = useRef<FormInstance>(null);
   const navigate = useNavigate();
@@ -119,6 +122,7 @@ export default function CreateReportPage() {
       )}
 
       <Form
+        name="create"
         ref={formRef}
         model={model}
         formValue={formValue}
@@ -144,8 +148,31 @@ export default function CreateReportPage() {
           />
         </Form.Group>
 
-        {error && <Message type="error">{error}</Message>}
-        {successMessage && <Message type="success">{successMessage}</Message>}
+        {error && (
+          <Message type="error" style={{ marginBottom: "16px" }}>
+            {error}
+          </Message>
+        )}
+        {successMessage && (
+          <Message type="success" style={{ marginBottom: "16px" }}>
+            {successMessage}
+          </Message>
+        )}
+
+        <Form.Group>
+          <Button
+            appearance="ghost"
+            onClick={() => {
+              setGenerateDraftModalOpen(true);
+              if (error || successMessage) {
+                setError(null);
+                setSuccessMessage(null);
+              }
+            }}
+          >
+            Generate Draft
+          </Button>
+        </Form.Group>
 
         <Form.Group style={{ marginTop: "24px" }}>
           <Button
@@ -165,6 +192,15 @@ export default function CreateReportPage() {
           </Button>
         </Form.Group>
       </Form>
+
+      <DraftModal
+        open={generateDraftModalOpen}
+        onClose={() => setGenerateDraftModalOpen(false)}
+        onUseDraft={(draft: string) => {
+          setFormValue((prev) => ({ ...prev, content: draft }));
+          setGenerateDraftModalOpen(false);
+        }}
+      />
     </div>
   );
 }
