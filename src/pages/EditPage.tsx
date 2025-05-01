@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Form, Button, Input, Schema, Message, Loader } from "rsuite";
+import { Form, Button, Input, Schema, Message, Loader, Modal } from "rsuite";
 import Editor from "../components/Editor";
 import type { FormInstance } from "rsuite";
 import { useNavigate, useParams } from "react-router-dom";
@@ -48,6 +48,9 @@ export default function EditReportPage() {
   });
   const formRef = useRef<FormInstance>(null);
   const navigate = useNavigate();
+
+  const [isSummaryModalOpen, setIsSummaryModalOpen] = useState(false);
+  const [summary, setSummary] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchReport = async () => {
@@ -119,6 +122,44 @@ export default function EditReportPage() {
     }
   };
 
+  const handleSummarize = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.post(
+        "https://api.openai.com/v1/chat/completions",
+        {
+          model: "gpt-4",
+          messages: [
+            {
+              role: "system",
+              content: "You are a helpful assistant that summarizes reports.",
+            },
+            {
+              role: "user",
+              content: `Please summarize the following report content: ${formValue.content}`,
+            },
+          ],
+          temperature: 0.7,
+          max_tokens: 500,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${import.meta.env.VITE_OPENAI_API_TOKEN}`,
+          },
+        }
+      );
+      const summary = response.data.choices[0].message.content;
+      setSummary(summary);
+      setIsSummaryModalOpen(true);
+    } catch (error) {
+      console.error("Error summarizing report:", error);
+      setError("Failed to generate the summary. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     return () => {
       setError(null);
@@ -180,6 +221,16 @@ export default function EditReportPage() {
             }
           />
         </Form.Group>
+        <Form.Group>
+          <Button
+            appearance="primary"
+            onClick={handleSummarize}
+            style={{ marginBottom: "12px" }}
+            disabled={loading || !formValue.content}
+          >
+            Summarize Report
+          </Button>
+        </Form.Group>
 
         {error && <Message type="error">{error}</Message>}
         {successMessage && <Message type="success">{successMessage}</Message>}
@@ -202,6 +253,32 @@ export default function EditReportPage() {
           </Button>
         </Form.Group>
       </Form>
+
+      {/* Modal for Summary */}
+      <Modal
+        open={isSummaryModalOpen}
+        onClose={() => setIsSummaryModalOpen(false)}
+        size="lg"
+      >
+        <Modal.Header>
+          <Modal.Title>Summary of Report</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {summary ? (
+            <p>{summary}</p>
+          ) : (
+            <Loader size="lg" content="Generating summary..." />
+          )}
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            onClick={() => setIsSummaryModalOpen(false)}
+            appearance="subtle"
+          >
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 }
