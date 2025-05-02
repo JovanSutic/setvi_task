@@ -20,7 +20,7 @@ import {
 import SortableItem from "./SortableItem";
 import { IReport } from "../types/app.types";
 
-const SortableList = ({ reports }: { reports: IReport[] }) => {
+function SortableList({ reports }: { reports: IReport[] }) {
   const [activeId, setActiveId] = useState<string>("");
   const [items, setItems] = useState(reports);
   const sensors = useSensors(
@@ -80,6 +80,6 @@ const SortableList = ({ reports }: { reports: IReport[] }) => {
       </div>
     </DndContext>
   );
-};
+}
 
 export default SortableList;

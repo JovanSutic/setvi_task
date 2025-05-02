@@ -5,7 +5,9 @@ import FolderMoveIcon from "@rsuite/icons/FolderMove";
 import EditIcon from "@rsuite/icons/Edit";
 import { useNavigate } from "react-router";
 
-const SortableItem = ({ id, title }: { id: number; title: string }) => {
+type SortableItemProps = { id: number; title: string };
+
+function SortableItem({ id, title }: SortableItemProps) {
   const {
     attributes,
     listeners,
@@ -57,6 +59,6 @@ const SortableItem = ({ id, title }: { id: number; title: string }) => {
       </div>
     </div>
   );
-};
+}
 
 export default SortableItem;

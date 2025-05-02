@@ -1,17 +1,6 @@
 import { delay, http, HttpResponse } from "msw";
-import { IReport, OpenAIChatRequest } from "../types/app.types";
-
-const summeryMock =
-  "Executive SummaryIn the first quarter of 2025, [Institution Name] demonstrated strong financial performance and operational resilience despite ongoing market volatility. Continued focus on digital transformation, customer-centric strategies, and robust risk management contributed to healthy revenue growth and profitability.Key Financial HighlightsTotal Revenue: $XX million (↑ X% YoY)Net Income: $XX million (↑ X% YoY)Earnings Per Share (EPS): $X.XXReturn on Equity (ROE): X.X%Cost-to-Income Ratio: XX.X% (↓ X.X percentage points)Business Segment PerformanceRetail Banking: Continued growth in personal loans and mortgage portfolios, with net interest income increasing by X%.Corporate Banking: Strong pipeline of commercial lending; transactional revenue saw X% uplift.Wealth Management: Assets under management (AUM) rose to $XX billion, driven by inflows and positive market performance.Digital Services: Digital channel usage increased by X%, supporting lower operational costs.Risk & Compliance OverviewCredit quality remained stable, with non-performing loan (NPL) ratio at X.X%.Liquidity coverage ratio (LCR) remained above regulatory thresholds.Cybersecurity protocols and anti-money laundering (AML) monitoring were further enhanced.Strategic InitiativesLaunched new AI-powered financial advisory platform.Expanded sustainable finance offerings, including green bonds and ESG-focused lending products.Continued branch rationalization and investment in digital infrastructure.Outlook for Q2 2025Management expects continued revenue growth supported by interest rate stability and improved loan demand. Focus areas include accelerating fintech partnerships, expanding regional market share, and advancing ESG integration.";
-
-export const sampleReports: IReport[] = [
-  { id: 1, title: "Monthly Sales Report", content: "A" },
-  { id: 2, title: "Yearly Summary", content: "B" },
-  { id: 3, title: "User Feedback Analysis", content: "C" },
-  { id: 4, title: "Revenue Overview", content: "D" },
-  { id: 5, title: "Something AP", content: "E" },
-  { id: 6, title: "Purchase Overview 2025", content: "F" },
-];
+import { OpenAIChatRequest } from "../types/app.types";
+import { sampleReports, draftMock, reportSummery } from "./mockData";
 
 type ReportPayload = {
   title: string;
@@ -126,8 +115,7 @@ export const handlers = [
               choices: [
                 {
                   message: {
-                    content:
-                      "This is the best report in the world and you don't need to worry about anything.",
+                    content: reportSummery,
                   },
                 },
               ],
@@ -141,7 +129,7 @@ export const handlers = [
             choices: [
               {
                 message: {
-                  content: summeryMock,
+                  content: draftMock,
                 },
               },
             ],

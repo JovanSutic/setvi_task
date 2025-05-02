@@ -1,13 +1,14 @@
-import {
+import React, {
   forwardRef,
   TextareaHTMLAttributes,
   useEffect,
   useRef,
   useState,
 } from "react";
-import axios from "axios";
+import axios, { isAxiosError } from "axios";
 import { Form, Button, Input, Schema, Modal } from "rsuite";
 import type { FormInstance, InputProps } from "rsuite";
+import { sanitize } from "../utils/helpers";
 
 const { StringType } = Schema.Types;
 
@@ -29,7 +30,7 @@ type DraftModalProps = {
   onUseDraft: (draft: string) => void;
 };
 
-export default function DraftModal({
+function DraftModal({
   open,
   onClose,
   onUseDraft,
@@ -56,7 +57,7 @@ export default function DraftModal({
             },
             {
               role: "user",
-              content: `Please write a draft report based on the following instructions: ${formValue.instructions}`,
+              content: `Please write a draft report based on the following instructions and return the draft in html format: ${formValue.instructions}`,
             },
           ],
           temperature: 0.7,
@@ -73,7 +74,9 @@ export default function DraftModal({
       const draft = response.data.choices[0].message.content;
       setReportDraft(draft);
     } catch (error) {
-      console.error("Error generating report:", error);
+      if (isAxiosError(error)) {
+        console.error("Error generating report:", error);
+      }
     } finally {
       setLoading(false);
     }
@@ -138,16 +141,15 @@ export default function DraftModal({
         {reportDraft && (
           <div style={{ marginTop: 20 }}>
             <h5 style={{ marginBottom: "8px" }}>Draft Report</h5>
-            <pre
+            <div
               style={{
                 whiteSpace: "pre-wrap",
                 wordBreak: "break-word",
                 fontSize: "12px",
                 fontStyle: "italic",
               }}
-            >
-              {reportDraft}
-            </pre>
+              dangerouslySetInnerHTML={{ __html: sanitize(reportDraft) }}
+            />
           </div>
         )}
       </Modal.Body>
@@ -159,3 +161,5 @@ export default function DraftModal({
     </Modal>
   );
 }
+
+export default React.memo(DraftModal);

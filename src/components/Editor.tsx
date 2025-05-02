@@ -1,3 +1,4 @@
+import React from "react";
 import Editor, {
   BtnBold,
   BtnItalic,
@@ -9,39 +10,17 @@ import Editor, {
   Toolbar,
   ContentEditableEvent,
 } from "react-simple-wysiwyg";
-import DOMPurify from "dompurify";
+import { sanitize } from "../utils/helpers";
 
-export default function CustomEditor({
-  value,
-  onChange,
-}: {
+type CustomEditorProps = {
   value: string;
   onChange: (cleanHtml: string) => void;
-}) {
+};
+
+function CustomEditor({ value, onChange }: CustomEditorProps) {
   const handleChange = (e: ContentEditableEvent) => {
     const dirtyHtml = e.target.value;
-    const cleanHtml = DOMPurify.sanitize(dirtyHtml, {
-      USE_PROFILES: { html: true },
-      ALLOWED_TAGS: [
-        "b",
-        "i",
-        "u",
-        "em",
-        "strong",
-        "a",
-        "p",
-        "br",
-        "ul",
-        "ol",
-        "li",
-        "blockquote",
-        "code",
-        "pre",
-        "span",
-      ],
-      ALLOWED_ATTR: ["href", "target", "title", "class", "style"],
-      ALLOWED_URI_REGEXP: /^(https?|mailto):/,
-    });
+    const cleanHtml = sanitize(dirtyHtml);
 
     onChange(cleanHtml);
   };
@@ -50,7 +29,7 @@ export default function CustomEditor({
     <Editor
       value={value}
       onChange={handleChange}
-      style={{ minHeight: "200px" }}
+      style={{ minHeight: "200px", maxHeight: "320px", overflow: "auto" }}
     >
       <Toolbar>
         <BtnUndo />
@@ -64,3 +43,5 @@ export default function CustomEditor({
     </Editor>
   );
 }
+
+export default React.memo(CustomEditor);
