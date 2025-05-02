@@ -1,11 +1,13 @@
-import { useEffect, useRef, useState } from "react";
-import { Form, Button, Input, Schema, Message, Loader } from "rsuite";
+/* eslint-disable react-hooks/exhaustive-deps */
+import { useCallback, useEffect, useRef, useState } from "react";
+import { Form, Button, Input, Schema } from "rsuite";
 import Editor from "../components/Editor";
 import type { FormInstance } from "rsuite";
 import { useNavigate } from "react-router-dom";
 import { useAppStore } from "../utils/store";
-import axios from "axios";
+import axios, { isAxiosError } from "axios";
 import DraftModal from "../components/DraftModal";
+import DataWrapper from "../components/DataWrapper";
 
 interface CreateReportForm {
   title: string;
@@ -56,7 +58,7 @@ export default function CreateReportPage() {
   const formRef = useRef<FormInstance>(null);
   const navigate = useNavigate();
 
-  const handleSubmit = async () => {
+  const handleSubmit = useCallback(async () => {
     if (formRef.current?.check()) {
       setLoading(true);
       setError(null);
@@ -76,14 +78,14 @@ export default function CreateReportPage() {
           setSuccessMessage("Success: New report created.");
         }
       } catch (error: unknown) {
-        if (error instanceof Error) {
+        if (isAxiosError(error)) {
           setError("Failed to create the report. Please try again.");
         }
       } finally {
         setLoading(false);
       }
     }
-  };
+  }, [formRef.current]);
 
   useEffect(() => {
     return () => {
@@ -93,114 +95,90 @@ export default function CreateReportPage() {
   }, []);
 
   return (
-    <div
-      className="create-report-container"
-      style={{ maxWidth: 800, margin: "0 auto", position: "relative" }}
+    <DataWrapper
+      loading={loading}
+      error={error}
+      successMessage={successMessage || ""}
     >
-      <h4>Create New Report</h4>
-      <p style={{ marginBottom: 20 }}>
-        Fill in the report title and content below:
-      </p>
-
-      {loading && (
-        <div
-          style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            background: "rgba(255, 255, 255, 0.6)",
-            zIndex: 999,
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <Loader size="lg" content="Loading..." vertical />
-        </div>
-      )}
-
-      <Form
-        name="create"
-        ref={formRef}
-        model={model}
-        formValue={formValue}
-        onChange={(value) => {
-          setFormValue(value as CreateReportForm);
-        }}
-        fluid
+      <div
+        className="create-report-container"
+        style={{ maxWidth: 800, margin: "0 auto", position: "relative" }}
       >
-        <Form.Group controlId="title">
-          <Form.ControlLabel>Report Title</Form.ControlLabel>
-          <Form.Control name="title" accepter={Input} />
-        </Form.Group>
+        <h4>Create New Report</h4>
+        <p style={{ marginBottom: 20 }}>
+          Fill in the report title and content below:
+        </p>
 
-        <Form.Group controlId="content">
-          <Form.ControlLabel>Report Content</Form.ControlLabel>
-          <Form.Control
-            name="content"
-            accepter={Editor}
-            value={formValue.content}
-            onChange={(value: string) =>
-              setFormValue((prev) => ({ ...prev, content: value }))
-            }
-          />
-        </Form.Group>
+        <Form
+          name="create"
+          ref={formRef}
+          model={model}
+          formValue={formValue}
+          onChange={(value) => {
+            setFormValue(value as CreateReportForm);
+          }}
+          fluid
+        >
+          <Form.Group controlId="title">
+            <Form.ControlLabel>Report Title</Form.ControlLabel>
+            <Form.Control name="title" accepter={Input} />
+          </Form.Group>
 
-        {error && (
-          <Message type="error" style={{ marginBottom: "16px" }}>
-            {error}
-          </Message>
-        )}
-        {successMessage && (
-          <Message type="success" style={{ marginBottom: "16px" }}>
-            {successMessage}
-          </Message>
-        )}
-
-        <Form.Group>
-          <Button
-            appearance="ghost"
-            onClick={() => {
-              setGenerateDraftModalOpen(true);
-              if (error || successMessage) {
-                setError(null);
-                setSuccessMessage(null);
+          <Form.Group controlId="content">
+            <Form.ControlLabel>Report Content</Form.ControlLabel>
+            <Form.Control
+              name="content"
+              accepter={Editor}
+              value={formValue.content}
+              onChange={(value: string) =>
+                setFormValue((prev) => ({ ...prev, content: value }))
               }
-            }}
-          >
-            Generate Draft
-          </Button>
-        </Form.Group>
+            />
+          </Form.Group>
 
-        <Form.Group style={{ marginTop: "24px" }}>
-          <Button
-            appearance="primary"
-            onClick={handleSubmit}
-            disabled={loading}
-          >
-            {loading ? "Saving..." : "Save Report"}
-          </Button>
-          <Button
-            appearance="subtle"
-            onClick={() => navigate(-1)}
-            style={{ marginLeft: 10 }}
-            disabled={loading}
-          >
-            Cancel
-          </Button>
-        </Form.Group>
-      </Form>
+          <Form.Group>
+            <Button
+              appearance="ghost"
+              onClick={() => {
+                setGenerateDraftModalOpen(true);
+                if (error || successMessage) {
+                  setError(null);
+                  setSuccessMessage(null);
+                }
+              }}
+            >
+              Generate Draft
+            </Button>
+          </Form.Group>
 
-      <DraftModal
-        open={generateDraftModalOpen}
-        onClose={() => setGenerateDraftModalOpen(false)}
-        onUseDraft={(draft: string) => {
-          setFormValue((prev) => ({ ...prev, content: draft }));
-          setGenerateDraftModalOpen(false);
-        }}
-      />
-    </div>
+          <Form.Group style={{ marginTop: "24px" }}>
+            <Button
+              appearance="primary"
+              onClick={handleSubmit}
+              disabled={loading}
+            >
+              {loading ? "Saving..." : "Save Report"}
+            </Button>
+            <Button
+              appearance="subtle"
+              onClick={() => navigate(-1)}
+              style={{ marginLeft: 10 }}
+              disabled={loading}
+            >
+              Cancel
+            </Button>
+          </Form.Group>
+        </Form>
+
+        <DraftModal
+          open={generateDraftModalOpen}
+          onClose={() => setGenerateDraftModalOpen(false)}
+          onUseDraft={(draft: string) => {
+            setFormValue((prev) => ({ ...prev, content: draft }));
+            setGenerateDraftModalOpen(false);
+          }}
+        />
+      </div>
+    </DataWrapper>
   );
 }

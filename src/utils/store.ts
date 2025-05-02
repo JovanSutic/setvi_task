@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { IReport, IReportCreate } from "../types/app.types";
-import { sampleReports } from "../mocks/handlers";
+import { sampleReports } from "../mocks/mockData";
 
 interface AppStore {
   reports: IReport[];
