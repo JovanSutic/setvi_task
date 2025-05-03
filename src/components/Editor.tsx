@@ -15,9 +15,14 @@ import { sanitize } from "../utils/helpers";
 type CustomEditorProps = {
   value: string;
   onChange: (cleanHtml: string) => void;
+  disabled?: boolean;
 };
 
-function CustomEditor({ value, onChange }: CustomEditorProps) {
+function CustomEditor({
+  value,
+  onChange,
+  disabled = false,
+}: CustomEditorProps) {
   const handleChange = (e: ContentEditableEvent) => {
     const dirtyHtml = e.target.value;
     const cleanHtml = sanitize(dirtyHtml);
@@ -29,7 +34,8 @@ function CustomEditor({ value, onChange }: CustomEditorProps) {
     <Editor
       value={value}
       onChange={handleChange}
-      style={{ minHeight: "200px", maxHeight: "320px", overflow: "auto" }}
+      className="editor-wrapper"
+      disabled={disabled}
     >
       <Toolbar>
         <BtnUndo />

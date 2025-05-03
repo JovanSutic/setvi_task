@@ -7,6 +7,7 @@ interface AppStore {
   loading: boolean;
   error: string | null;
   successMessage: string | null;
+  role: "Admin" | "Viewer";
 
   setReports: (reports: IReport[]) => void;
   addReport: (report: IReportCreate) => void;
@@ -22,6 +23,7 @@ export const useAppStore = create<AppStore>((set) => ({
   loading: false,
   error: null,
   successMessage: null,
+  role: "Admin",
 
   setReports: (reports) => set({ reports }),
   addReport: (report: IReportCreate) =>

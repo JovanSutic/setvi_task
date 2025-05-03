@@ -47,6 +47,7 @@ export default function CreateReportPage() {
     loading,
     error,
     successMessage,
+    role,
     setSuccessMessage,
     addReport,
     setLoading,
@@ -88,6 +89,9 @@ export default function CreateReportPage() {
   }, [formRef.current]);
 
   useEffect(() => {
+    if (role === "Viewer") {
+      navigate("/");
+    }
     return () => {
       setError(null);
       setSuccessMessage(null);
@@ -100,14 +104,9 @@ export default function CreateReportPage() {
       error={error}
       successMessage={successMessage || ""}
     >
-      <div
-        className="create-report-container"
-        style={{ maxWidth: 800, margin: "0 auto", position: "relative" }}
-      >
+      <div className="create-report-container">
         <h4>Create New Report</h4>
-        <p style={{ marginBottom: 20 }}>
-          Fill in the report title and content below:
-        </p>
+        <p className="mb-medium">Fill in the report title and content below:</p>
 
         <Form
           name="create"
@@ -151,19 +150,19 @@ export default function CreateReportPage() {
             </Button>
           </Form.Group>
 
-          <Form.Group style={{ marginTop: "24px" }}>
+          <Form.Group className="mt-medium">
             <Button
               appearance="primary"
               onClick={handleSubmit}
-              disabled={loading}
+              disabled={loading || role === "Viewer"}
             >
               {loading ? "Saving..." : "Save Report"}
             </Button>
             <Button
               appearance="subtle"
               onClick={() => navigate(-1)}
-              style={{ marginLeft: 10 }}
-              disabled={loading}
+              className="ml-small"
+              disabled={loading || role === "Viewer"}
             >
               Cancel
             </Button>

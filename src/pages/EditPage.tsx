@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Form, Button, Input, Schema, Loader, Modal } from "rsuite";
 import Editor from "../components/Editor";
 import type { FormInstance } from "rsuite";
@@ -39,6 +39,7 @@ export default function EditReportPage() {
     loading,
     error,
     successMessage,
+    role,
     setSuccessMessage,
     setLoading,
     setError,
@@ -49,6 +50,7 @@ export default function EditReportPage() {
     content: "",
   });
   const formRef = useRef<FormInstance>(null);
+  const reportRef = useRef<IReportCreate>(null);
   const navigate = useNavigate();
 
   const [isSummaryModalOpen, setIsSummaryModalOpen] = useState(false);
@@ -109,7 +111,7 @@ export default function EditReportPage() {
         {
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${import.meta.env.VITE_OPENAI_API_TOKEN}`,
+            Authorization: `Bearer ${import.meta.env.VITE_OPENAI_API_KEY}`,
           },
         }
       );
@@ -136,6 +138,7 @@ export default function EditReportPage() {
       const { title, content } = response.data?.data || {};
 
       if (title && content) {
+        reportRef.current = { title, content };
         setFormValue({ title, content });
       } else {
         setError("Report data is incomplete or malformed.");
@@ -149,13 +152,25 @@ export default function EditReportPage() {
     }
   }, []);
 
+  const isReportEdited = useMemo(() => {
+    if (reportRef.current) {
+      return (
+        reportRef.current.content !== formValue.content.trim() ||
+        reportRef.current.title !== formValue.title.trim()
+      );
+    }
+    return false;
+  }, [reportRef.current, formValue.title, formValue.content]);
+
   useEffect(() => {
     if (id && !reports.length) {
       fetchReport();
     } else if (id && reports.length) {
       const report = reports.find((report) => report.id === parseInt(id));
+
       if (report) {
         setFormValue({ title: report.title, content: report.content });
+        reportRef.current = { title: report.title, content: report.content };
       } else {
         setError("Report not found.");
       }
@@ -175,22 +190,20 @@ export default function EditReportPage() {
       error={error}
       successMessage={successMessage || ""}
     >
-      <div
-        className="create-report-container"
-        style={{ maxWidth: 800, margin: "0 auto", position: "relative" }}
-      >
+      <div className="create-report-container">
         <h4>Edit Report</h4>
-        <p style={{ marginBottom: 20 }}>
-          Modify the report title and content below:
-        </p>
+        <p className="mb-medium">Modify the report title and content below:</p>
 
         <Form
           ref={formRef}
           model={model}
           formValue={formValue}
           onChange={(value) => {
-            setFormValue(value as IReportCreate);
+            if (role === "Admin") {
+              setFormValue(value as IReportCreate);
+            }
           }}
+          disabled={role !== "Admin"}
           fluid
         >
           <Form.Group controlId="title">
@@ -204,34 +217,35 @@ export default function EditReportPage() {
               name="content"
               accepter={Editor}
               value={formValue.content}
-              onChange={(value: string) =>
-                setFormValue((prev) => ({ ...prev, content: value }))
-              }
+              onChange={(value: string) => {
+                setFormValue((prev) => ({ ...prev, content: value }));
+              }}
+              disabled={role !== "Admin"}
             />
           </Form.Group>
           <Form.Group>
             <Button
-              appearance="primary"
+              appearance="ghost"
               onClick={handleSummarize}
-              style={{ marginBottom: "12px" }}
-              disabled={loading || !formValue.content}
+              className="mb-small"
+              disabled={loading || !formValue.content || role === "Viewer"}
             >
               Summarize Report
             </Button>
           </Form.Group>
 
-          <Form.Group style={{ marginTop: "24px" }}>
+          <Form.Group className="mt-medium">
             <Button
               appearance="primary"
               onClick={handleSubmit}
-              disabled={loading}
+              disabled={loading || role === "Viewer" || !isReportEdited}
             >
               {loading ? "Saving..." : "Save Changes"}
             </Button>
             <Button
               appearance="subtle"
               onClick={() => navigate(-1)}
-              style={{ marginLeft: 10 }}
+              className="ml-small"
               disabled={loading}
             >
               Cancel

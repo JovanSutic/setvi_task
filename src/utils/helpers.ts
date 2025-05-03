@@ -24,3 +24,8 @@ export const sanitize = (text: string) => {
     ALLOWED_URI_REGEXP: /^(https?|mailto):/,
   });
 };
+
+
+export function truncateString(input: string): string {
+  return input.length > 25 ? input.slice(0, 22) + '...' : input;
+}
