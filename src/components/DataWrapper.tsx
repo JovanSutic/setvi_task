@@ -18,30 +18,19 @@ function DataWrapper({
     <>
       {loading && (
         <div
-          style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            background: "rgba(255, 255, 255, 0.6)",
-            zIndex: 999,
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
+          className="loader-wrapper"
         >
           <Loader size="lg" content="Loading..." vertical />
         </div>
       )}
 
       {error && (
-        <Message type="error" style={{ marginBottom: "16px" }}>
+        <Message type="error" className="mb-medium">
           {error}
         </Message>
       )}
       {successMessage && (
-        <Message type="success" style={{ marginBottom: "16px" }}>
+        <Message type="success" className="mb-medium">
           {successMessage}
         </Message>
       )}

@@ -26,11 +26,7 @@ function CustomEditor({ value, onChange }: CustomEditorProps) {
   };
 
   return (
-    <Editor
-      value={value}
-      onChange={handleChange}
-      style={{ minHeight: "200px", maxHeight: "320px", overflow: "auto" }}
-    >
+    <Editor value={value} onChange={handleChange} className="editor-wrapper">
       <Toolbar>
         <BtnUndo />
         <BtnRedo />
