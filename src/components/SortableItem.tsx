@@ -4,6 +4,7 @@ import { IconButton, Panel, Stack } from "rsuite";
 import FolderMoveIcon from "@rsuite/icons/FolderMove";
 import EditIcon from "@rsuite/icons/Edit";
 import { useNavigate } from "react-router";
+import { truncateString } from "../utils/helpers";
 
 type SortableItemProps = { id: number; title: string };
 
@@ -34,7 +35,7 @@ function SortableItem({ id, title }: SortableItemProps) {
           bordered
           header={
             <Stack justifyContent="space-between">
-              <span>{title}</span>
+              <span>{truncateString(title)}</span>
             </Stack>
           }
         >

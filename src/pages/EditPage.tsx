@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Form, Button, Input, Schema, Loader, Modal } from "rsuite";
 import Editor from "../components/Editor";
 import type { FormInstance } from "rsuite";
@@ -39,6 +39,7 @@ export default function EditReportPage() {
     loading,
     error,
     successMessage,
+    role,
     setSuccessMessage,
     setLoading,
     setError,
@@ -49,6 +50,7 @@ export default function EditReportPage() {
     content: "",
   });
   const formRef = useRef<FormInstance>(null);
+  const reportRef = useRef<IReportCreate>(null);
   const navigate = useNavigate();
 
   const [isSummaryModalOpen, setIsSummaryModalOpen] = useState(false);
@@ -136,6 +138,7 @@ export default function EditReportPage() {
       const { title, content } = response.data?.data || {};
 
       if (title && content) {
+        reportRef.current = { title, content };
         setFormValue({ title, content });
       } else {
         setError("Report data is incomplete or malformed.");
@@ -149,13 +152,25 @@ export default function EditReportPage() {
     }
   }, []);
 
+  const isReportEdited = useMemo(() => {
+    if (reportRef.current) {
+      return (
+        reportRef.current.content !== formValue.content.trim() ||
+        reportRef.current.title !== formValue.title.trim()
+      );
+    }
+    return false;
+  }, [reportRef.current, formValue.title, formValue.content]);
+
   useEffect(() => {
     if (id && !reports.length) {
       fetchReport();
     } else if (id && reports.length) {
       const report = reports.find((report) => report.id === parseInt(id));
+
       if (report) {
         setFormValue({ title: report.title, content: report.content });
+        reportRef.current = { title: report.title, content: report.content };
       } else {
         setError("Report not found.");
       }
@@ -184,8 +199,11 @@ export default function EditReportPage() {
           model={model}
           formValue={formValue}
           onChange={(value) => {
-            setFormValue(value as IReportCreate);
+            if (role === "Admin") {
+              setFormValue(value as IReportCreate);
+            }
           }}
+          disabled={role !== "Admin"}
           fluid
         >
           <Form.Group controlId="title">
@@ -199,9 +217,10 @@ export default function EditReportPage() {
               name="content"
               accepter={Editor}
               value={formValue.content}
-              onChange={(value: string) =>
-                setFormValue((prev) => ({ ...prev, content: value }))
-              }
+              onChange={(value: string) => {
+                setFormValue((prev) => ({ ...prev, content: value }));
+              }}
+              disabled={role !== "Admin"}
             />
           </Form.Group>
           <Form.Group>
@@ -209,7 +228,7 @@ export default function EditReportPage() {
               appearance="ghost"
               onClick={handleSummarize}
               className="mb-small"
-              disabled={loading || !formValue.content}
+              disabled={loading || !formValue.content || role === "Viewer"}
             >
               Summarize Report
             </Button>
@@ -219,7 +238,7 @@ export default function EditReportPage() {
             <Button
               appearance="primary"
               onClick={handleSubmit}
-              disabled={loading}
+              disabled={loading || role === "Viewer" || !isReportEdited}
             >
               {loading ? "Saving..." : "Save Changes"}
             </Button>

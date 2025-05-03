@@ -1,11 +1,6 @@
 import { useEffect, useMemo } from "react";
 import { useNavigate, useSearchParams } from "react-router";
-import {
-  Input,
-  SelectPicker,
-  IconButton,
-  InputGroup,
-} from "rsuite";
+import { Input, SelectPicker, IconButton, InputGroup } from "rsuite";
 import PlusIcon from "@rsuite/icons/Plus";
 import SearchIcon from "@rsuite/icons/Search";
 import SortableList from "../components/SortableList";
@@ -15,7 +10,7 @@ import DataWrapper from "../components/DataWrapper";
 
 const IndexPage = () => {
   const navigate = useNavigate();
-  const { reports, loading, error, setReports, setLoading, setError } =
+  const { reports, loading, error, role, setReports, setLoading, setError } =
     useAppStore();
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -93,6 +88,7 @@ const IndexPage = () => {
               appearance="primary"
               block
               onClick={() => navigate("/create")}
+              disabled={loading || role === "Viewer"}
             >
               New Report
             </IconButton>

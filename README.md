@@ -29,5 +29,7 @@ This is a [Vite](https://vitejs.dev/) project using **TypeScript**. Follow the s
 4. **Report filtering is performed in local state**, not via a mocked API endpoint.
 5. **Styling is minimal** and kept intentionally simple to focus on core functionality.
 6. **Reports are saved as HTML-formatted strings**, assuming downstream systems can parse/render HTML content.
+7. **Roles are implemented through store field**, there is no mocked API response that is getting the role just a field in the store that needs to be changed for different access, default role is Admin.
+8. **Field validations are provisional**, they are only there to show basic functionality.
 
 ````

@@ -47,6 +47,7 @@ export default function CreateReportPage() {
     loading,
     error,
     successMessage,
+    role,
     setSuccessMessage,
     addReport,
     setLoading,
@@ -88,6 +89,9 @@ export default function CreateReportPage() {
   }, [formRef.current]);
 
   useEffect(() => {
+    if (role === "Viewer") {
+      navigate("/");
+    }
     return () => {
       setError(null);
       setSuccessMessage(null);
@@ -100,13 +104,9 @@ export default function CreateReportPage() {
       error={error}
       successMessage={successMessage || ""}
     >
-      <div
-        className="create-report-container"
-      >
+      <div className="create-report-container">
         <h4>Create New Report</h4>
-        <p className="mb-medium">
-          Fill in the report title and content below:
-        </p>
+        <p className="mb-medium">Fill in the report title and content below:</p>
 
         <Form
           name="create"
@@ -154,7 +154,7 @@ export default function CreateReportPage() {
             <Button
               appearance="primary"
               onClick={handleSubmit}
-              disabled={loading}
+              disabled={loading || role === "Viewer"}
             >
               {loading ? "Saving..." : "Save Report"}
             </Button>
@@ -162,7 +162,7 @@ export default function CreateReportPage() {
               appearance="subtle"
               onClick={() => navigate(-1)}
               className="ml-small"
-              disabled={loading}
+              disabled={loading || role === "Viewer"}
             >
               Cancel
             </Button>
