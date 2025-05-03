@@ -109,7 +109,7 @@ export default function EditReportPage() {
         {
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${import.meta.env.VITE_OPENAI_API_TOKEN}`,
+            Authorization: `Bearer ${import.meta.env.VITE_OPENAI_API_KEY}`,
           },
         }
       );
@@ -175,14 +175,9 @@ export default function EditReportPage() {
       error={error}
       successMessage={successMessage || ""}
     >
-      <div
-        className="create-report-container"
-        style={{ maxWidth: 800, margin: "0 auto", position: "relative" }}
-      >
+      <div className="create-report-container">
         <h4>Edit Report</h4>
-        <p style={{ marginBottom: 20 }}>
-          Modify the report title and content below:
-        </p>
+        <p className="mb-medium">Modify the report title and content below:</p>
 
         <Form
           ref={formRef}
@@ -211,16 +206,16 @@ export default function EditReportPage() {
           </Form.Group>
           <Form.Group>
             <Button
-              appearance="primary"
+              appearance="ghost"
               onClick={handleSummarize}
-              style={{ marginBottom: "12px" }}
+              className="mb-small"
               disabled={loading || !formValue.content}
             >
               Summarize Report
             </Button>
           </Form.Group>
 
-          <Form.Group style={{ marginTop: "24px" }}>
+          <Form.Group className="mt-medium">
             <Button
               appearance="primary"
               onClick={handleSubmit}
@@ -231,7 +226,7 @@ export default function EditReportPage() {
             <Button
               appearance="subtle"
               onClick={() => navigate(-1)}
-              style={{ marginLeft: 10 }}
+              className="ml-small"
               disabled={loading}
             >
               Cancel

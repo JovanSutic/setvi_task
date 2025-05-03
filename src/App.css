@@ -1,10 +1,49 @@
-.rs-col-spacing {
-  margin-bottom: 8px;
+.loader-wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.6);
+  z-index: 999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.rs-col-spacing-1 {
+.editor-wrapper {
+  min-height: 200px;
+  max-height: 320px;
+  overflow: auto;
+}
+
+.draft-wrapper {
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-size: 12px;
+  font-style: italic;
+}
+
+.grab {
+  cursor: grab;
+}
+
+.mb-small {
+  margin-bottom: 10px;
+}
+
+.ml-small {
+  margin-left: 10px;
+}
+
+.mt-medium {
+  margin-top: 20px;
+}
+
+.mb-medium {
   margin-bottom: 20px;
 }
+
 .filter-group {
   display: flex;
   flex-direction: column;
@@ -55,9 +94,16 @@
   width: 300px;
 }
 
+.report-card__buttons {
+  display: flex;
+  flex-direction: row;
+  gap: 15px;
+}
+
 .create-report-container {
-  max-width: 700px;
-  margin: auto;
+  max-width: 800px;
+  margin: 0 auto;
+  position: relative;
 }
 
 .editor-input {
@@ -76,13 +122,6 @@
 }
 
 @media (min-width: 768px) {
-  .rs-col-spacing {
-    margin-bottom: 12px;
-  }
-
-  .rs-col-spacing-1 {
-    margin-bottom: 8px;
-  }
 
   .filter-group {
     flex-direction: row;

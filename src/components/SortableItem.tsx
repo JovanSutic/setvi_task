@@ -38,14 +38,14 @@ function SortableItem({ id, title }: SortableItemProps) {
             </Stack>
           }
         >
-          <div style={{ display: "flex", flexDirection: "row", gap: "15px" }}>
+          <div className="report-card__buttons">
             <IconButton
               {...listeners}
               {...attributes}
               icon={<FolderMoveIcon />}
               appearance="subtle"
               size="sm"
-              style={{ cursor: "grab" }}
+              className="grab"
               aria-label="Drag handle"
             />
             <IconButton

@@ -66,7 +66,7 @@ function DraftModal({
         {
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${import.meta.env.VITE_OPENAI_API_TOKEN}`,
+            Authorization: `Bearer ${import.meta.env.VITE_OPENAI_API_KEY}`,
           },
         }
       );
@@ -130,7 +130,7 @@ function DraftModal({
                   onUseDraft(reportDraft);
                   onClose();
                 }}
-                style={{ marginLeft: 8 }}
+                className="ml-small"
               >
                 Use Draft
               </Button>
@@ -139,15 +139,10 @@ function DraftModal({
         </Form>
 
         {reportDraft && (
-          <div style={{ marginTop: 20 }}>
-            <h5 style={{ marginBottom: "8px" }}>Draft Report</h5>
+          <div className="mt-medium">
+            <h5 className="mb-small">Draft Report</h5>
             <div
-              style={{
-                whiteSpace: "pre-wrap",
-                wordBreak: "break-word",
-                fontSize: "12px",
-                fontStyle: "italic",
-              }}
+              className="draft-wrapper"
               dangerouslySetInnerHTML={{ __html: sanitize(reportDraft) }}
             />
           </div>

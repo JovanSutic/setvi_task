@@ -117,7 +117,6 @@ const IndexPage = () => {
               searchable={false}
               cleanable={false}
               className="filter-item"
-              style={{ width: "100%" }}
             />
           </div>
         </div>

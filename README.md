@@ -1,54 +1,33 @@
-# React + TypeScript + Vite
+# Setvi Frontend Task
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This is a [Vite](https://vitejs.dev/) project using **TypeScript**. Follow the steps below to get your development environment up and running.
 
-Currently, two official plugins are available:
+## Setup instruction
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+1. Place the provided `.env` file in the root of the project.
+2. Install dependencies and start the server:
 
-## Expanding the ESLint configuration
+   ```bash
+   npm install
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+   npm run dev
+   ```
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+## Explanation of AI integration
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+1. **AI integration is implemented using a POST call**, not the official OpenAI SDK/library.
+2. **AI response calls are mocked** for development and testing purposes.
+3. **"Generate Report"** is available under the **Create** page, while  
+   **"Summarize Report"** is available under the **Edit** page.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Known limitations and assumptions
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
+1. **All API responses are mocked** — No real backend or OpenAI API calls are made by default.
+2. **React Simple WYSIWYG Editor** is used for simplicity, rather than a more advanced or customizable editor.
+3. **Single mock response** for each "draft" and "summarize" AI actions.  
+   - If you provide a working `API_KEY` and **comment out the final mock handler**, the app should work with actual OpenAI responses.
+4. **Report filtering is performed in local state**, not via a mocked API endpoint.
+5. **Styling is minimal** and kept intentionally simple to focus on core functionality.
+6. **Reports are saved as HTML-formatted strings**, assuming downstream systems can parse/render HTML content.
+
+````

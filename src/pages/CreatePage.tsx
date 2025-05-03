@@ -102,10 +102,9 @@ export default function CreateReportPage() {
     >
       <div
         className="create-report-container"
-        style={{ maxWidth: 800, margin: "0 auto", position: "relative" }}
       >
         <h4>Create New Report</h4>
-        <p style={{ marginBottom: 20 }}>
+        <p className="mb-medium">
           Fill in the report title and content below:
         </p>
 
@@ -151,7 +150,7 @@ export default function CreateReportPage() {
             </Button>
           </Form.Group>
 
-          <Form.Group style={{ marginTop: "24px" }}>
+          <Form.Group className="mt-medium">
             <Button
               appearance="primary"
               onClick={handleSubmit}
@@ -162,7 +161,7 @@ export default function CreateReportPage() {
             <Button
               appearance="subtle"
               onClick={() => navigate(-1)}
-              style={{ marginLeft: 10 }}
+              className="ml-small"
               disabled={loading}
             >
               Cancel
